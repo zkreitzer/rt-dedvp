@@ -1,0 +1,15 @@
+---
+layout: default
+---
+
+{{ content }}
+
+<h2>Latest Downloads</h2>
+{% assign current = site.data.software[page.product].current %}
+{% include software_table.html data=current %}
+
+{% assign archive = site.data.software[page.product].archived %}
+{% if archive %}
+    <h2>Archive</h2>
+    {% include software_table.html data=archive %}
+{% endif %}

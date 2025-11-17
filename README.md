@@ -28,7 +28,29 @@ The FPGA logic developed in this repository is ultimately aimed at enabling or s
 - Extraction of timing and amplitude parameters from those waveforms
 - Data framing suitable for downstream delay line anode reconstruction and analysis
 
-(At present, only documentation is checked into this repository; the FPGA/HDL implementation described above is planned but not yet included.)
+### Other Key Concepts and Acronyms
+
+While the sections above introduce the main physics and hardware ideas, a few
+additional terms appear throughout this repository:
+
+- **FT60x** – FTDI's USB 3.0 FIFO (FT600/FT601) family used on many NALU boards
+  to move data off the FPGA at high rates. In this repository it is primarily
+  relevant via the `ft60x_rs` Rust crate snapshot under
+  `external/nalu/ft60x-rs-main/`.
+- **A3PE / ProASIC3E** – Microchip (formerly Actel) FPGA family used by the
+  A3PE prototype kit (see `docs/a3pe_proto_kit_ug.pdf`). This is the reference
+  FPGA platform for the initial design work in this repository.
+- **NaluScope** – NALU's GUI application for configuring ASOC hardware and
+  viewing waveforms (see `docs/NaluScope.0.22.3.-.ASoCv3.User.Manual.pdf`).
+- **NALU DAQ software (e.g., `naludaq`)** – NALU's Python-based DAQ libraries
+  referenced in NALU documentation and examples. They are *not* vendored in
+  this repository, but the `naluexamples-main/` snapshot under
+  `external/nalu/` demonstrates typical usage patterns.
+
+
+(At present, this repository contains documentation plus a small amount of
+scaffolding/example code; a full production FPGA/HDL implementation and
+end-to-end software stack are **not** yet included.)
 
 ## Project Scope
 
@@ -39,25 +61,38 @@ The technical scope of this repository is centered on:
 - Providing data interfaces and formats suitable for delay line anode characterization
 - Serving as a shared technical space for Virginia Tech and SwRI collaborators working on ASOC-based MCP readout
 
-As of the current state of the repository, the primary contents are documentation files that describe the hardware platform and ASOC performance. HDL sources, FPGA project files, simulation testbenches, and software utilities are expected future additions but are **not yet present**.
+As of the current state of the repository, the primary contents are NALU and
+ASOC documentation plus scaffolding HDL/firmware/software templates. A complete,
+validated ASOC FPGA design and associated tools remain planned work.
 
 ## Repository Structure
 
 Current top-level layout:
 
 - `README.md` – This file, providing an overview of the project and repository.
-- `docs/` – Documentation related to the ASOC ASIC and FPGA prototyping hardware and experiments:
-  - `Measurement_results_for_the_ASoC_V3_A_High_Performance_Waveform_Digitizer_System-on-Chip.pdf` – Measurement and characterization report for the ASOC V3 waveform digitizer system-on-chip.
-  - `a3pe_proto_kit_ug.pdf` – User guide for an A3PE (ProASIC3E) prototype kit, describing the FPGA prototyping platform and its usage.
+- `docs/` – Documentation related to the ASOC ASIC, NALU tools, and FPGA prototyping hardware and experiments:
+  - `Measurement_results_for_the_ASoC_V3_A_High_Performance_Waveform_Digitizer_System-on-Chip.pdf` and
+    `Measurement_results_for_the_ASoC_V3_A_High_Performance_Waveform_Digitizer_System-on-Chip (1).pdf` – Measurement and
+    characterization reports for the ASOC V3 waveform digitizer system-on-chip.
+  - `1-s2.0-S0168900219304462-main.pdf` – Journal article describing ASOC performance and characterization.
+  - `ASOCv3 Quick Start Guide.pdf` – NALU quick-start documentation for ASOCv3-based hardware.
+  - `ASoCv3 Product Sheet.pdf` – NALU product sheet summarizing ASOCv3 capabilities and specifications.
+  - `NaluScope.0.22.3.-.ASoCv3.User.Manual.pdf` – User manual for the NaluScope software (version 0.22.3) configured for ASOCv3.
+  - `ASoCv3_v67_165_57.bit` – Example/reference FPGA bitstream for ASOCv3 hardware provided by NALU.
+  - `a3pe_proto_kit_ug.pdf` – User guide for the A3PE (ProASIC3E) prototype kit used as the FPGA development platform.
+  - `PROJECT_SCHEDULE.md` – This repository’s ASOC FPGA project schedule and VT student work plan.
   - `docs/hardware/` – Example/template hardware documentation for boards, schematics, and vendor materials.
   - `docs/fpga/` – Example/template documentation for FPGA/ASOC design specifications and interfaces.
   - `docs/experiments/` – Example/template documentation for calibration procedures and MCP delay line anode experiments.
 - `fpga/` – FPGA design tree containing example/template HDL, constraints, simulation testbenches, and an A3PE prototype kit project scaffold.
 - `firmware/` – Example/template embedded firmware sources and platform stubs for ASOC/FPGA configuration and control.
 - `software/` – Example/template host-side tools for data acquisition and analysis.
-- `external/nalu/` – Integration point for NALU-provided software repositories, currently containing only a placeholder README.
+- `external/nalu/` – Integration point for NALU-provided software repositories, currently containing:
+  - `ft60x-rs-main/` – Rust library `ft60x_rs` (version 0.1.0) for FTDI FT60x USB 3.0 FIFO ICs.
+  - `naluexamples-main/` – Python examples package `naluexamples` (version 0.1.0) demonstrating use of Nalu software.
+  - `nalusupport-main/` – Source for Nalu Scientific’s documentation/support site (Jekyll + Just the Docs).
 
-Aside from the two PDF documents in `docs/` and this top-level README, all code-like files currently present (under `fpga/`, `firmware/`, `software/`, and `docs/*` subdirectories) are **examples/templates only** and must be replaced or extended with actual implementation code or documents.
+Aside from documentation files in `docs/` (PDFs and Markdown) and this top-level README, all code-like files currently present (under `fpga/`, `firmware/`, `software/`, and `docs/*` subdirectories) are **examples/templates only** and must be replaced or extended with actual implementation code or documents.
 
 ## Planned Repository Structure
 
@@ -104,13 +139,36 @@ Intended to hold host-side tools that interact with the FPGA/ASOC hardware for d
 
 ### `docs/` Extensions – Design and Calibration Documentation
 
-The `docs/` directory now contains the two core hardware PDFs listed above, plus example/template Markdown documents in the following subdirectories:
+The `docs/` directory contains NALU-provided PDFs, the ASOC FPGA project
+schedule, and example/template Markdown documents in the following
+subdirectories:
 
-- `docs/hardware/` – Example/template board-level manuals, schematics, and vendor documentation (including the existing A3PE prototype kit user guide once reorganized).
-- `docs/fpga/` – Example/template design specifications, interface definitions, and timing diagrams for the FPGA/ASOC implementation.
-- `docs/experiments/` – Example/template calibration procedures, measurement setups, and experiment-specific notes for MCP delay line anode characterization.
+- `docs/hardware/` – Example/template board-level manuals, schematics, and
+  vendor documentation. Start by editing `docs/hardware/hardware_overview_example.md`
+  to describe your actual ASOC V3 hardware, A3PE prototype kit, power
+  distribution, and external lab equipment.
+- `docs/fpga/` – Example/template design specifications, interface definitions,
+  and timing diagrams for the FPGA/ASOC implementation. Begin with
+  `docs/fpga/fpga_design_notes_example.md` and evolve it into a living record of
+  your FPGA architecture, clocks, and CDC strategy.
+- `docs/experiments/` – Example/template calibration procedures, measurement
+  setups, and experiment-specific notes for MCP delay line anode
+  characterization. Use `docs/experiments/experiment_log_example.md` as a
+  starting point for a detailed experiment log.
 
-These subdirectories currently contain only placeholder/example content and should be replaced or extended with detailed, experiment-specific documentation as the project matures.
+These subdirectories currently contain only placeholder/example content and
+should be replaced or extended with detailed, experiment-specific documentation
+as the project matures.
+
+## Project Schedule and VT Student Work Plan
+
+Virginia Tech students participating in this ASOC FPGA project should refer to
+`docs/PROJECT_SCHEDULE.md` for a proposed multi-phase schedule and task
+breakdown covering ramp-up, FPGA design, ASOC integration, MCP delay line anode
+characterization, and final documentation/presentations.
+
+The schedule is intended as a starting point and should be adapted to the
+specific academic calendar, team composition, and evolving project goals.
 
 
 ## Collaboration: Virginia Tech and SwRI
@@ -126,28 +184,242 @@ Coordination, project planning, and detailed task tracking are handled within th
 
 ## Build and Setup Instructions
 
-**Important:** At this time there are no FPGA project files, HDL sources, or software utilities in the repository, and therefore there are **no build or setup steps** that can be executed directly from this codebase.
+**Important:** The repository currently contains **only scaffolding/example** HDL,
+firmware, and software files; there is no complete, validated FPGA design or
+host toolchain that can be built and run end-to-end. As such, there are still
+no fully defined build or setup steps that produce a working ASOC readout
+system.
 
-When FPGA and ASIC support files are added, this section is intended to document, at minimum:
+### Quick Start Checklist (First Week)
+
+If you are new to the project and have roughly your first week to ramp up,
+this checklist provides a practical path:
+
+1. **Clone and skim:** Clone the repository and skim this `README.md` to get a
+   sense of the goals and directory layout.
+2. **Read key NALU docs:** In `docs/`, read the ASOCv3 Quick Start Guide and
+   Product Sheet carefully; skim the NaluScope manual and measurement results
+   to see example performance.
+3. **Review the schedule:** Open `docs/PROJECT_SCHEDULE.md` and identify which
+   phase and tasks line up with your role and timeline.
+4. **Browse templates for your area:** Open the example files listed in the "3. Understand the Example/Template Structure" subsection below that match your focus (FPGA, firmware, DAQ, analysis, or documentation) and read the comments/TODOs.
+5. **Meet with your mentor:** Discuss the schedule and choose one small,
+   concrete first task (e.g., filling out one Markdown template or replacing an
+   example source file with a minimal working implementation).
+6. **Capture questions:** Keep a running notes document with questions and
+   observations so they can be turned into updates to this README, template
+   docs, or the FAQ over time.
+
+
+
+As real FPGA and ASIC support files are added, this section is intended to
+document, at minimum:
 
 - Required FPGA toolchain(s) and versions (e.g., the specific vendor tools used with the A3PE prototype kit)
 - Project directory layout for HDL, constraints, and simulation
 - Steps to synthesize, implement, and program the target FPGA
 - Any companion software or scripts required for ASOC configuration and data readout
 
-Until those artifacts are present, this repository should be treated as a documentation archive and planning space.
+Until those artifacts are present, this repository should be treated primarily
+as a documentation archive, vendor reference snapshot, and planning space.
+
+## Getting Started for New Contributors
+
+This section is intended to help a new Virginia Tech student or SwRI engineer
+clone the repository, understand what exists today, and see how to begin
+contributing.
+
+### 1. Read Essential Background and NALU Documentation
+
+1. Skim this `README.md` to understand the overall goals and repository layout.
+2. In `docs/`, read (in roughly this order):
+   - `ASOCv3 Quick Start Guide.pdf`
+   - `ASoCv3 Product Sheet.pdf`
+   - `NaluScope.0.22.3.-.ASoCv3.User.Manual.pdf`
+   - `Measurement_results_for_the_ASoC_V3_A_High_Performance_Waveform_Digitizer_System-on-Chip.pdf`
+   - `1-s2.0-S0168900219304462-main.pdf`
+3. Skim `a3pe_proto_kit_ug.pdf` to understand the FPGA prototype platform.
+
+### 2. Set Up Tools and Explore NALU Software
+
+1. Ensure you can open the NALU PDFs on your development machine.
+2. Work with your mentor to install the FPGA toolchain for the A3PE/ProASIC3E
+   prototype kit (exact tools and versions may depend on institutional
+   licensing and current lab practice).
+3. Set up a Python environment (and Rust if relevant) suitable for running or
+   exploring the NALU examples.
+4. Explore the NALU software snapshots under `external/nalu/`:
+   - `ft60x-rs-main/` – Rust FT60x library that may be used for high-throughput
+     DAQ from FT60x-based USB links.
+   - `naluexamples-main/` – Python example code illustrating how NALU software
+     stacks are used in practice.
+   - `nalusupport-main/` – Offline copy of NALU’s support site and docs.
+
+### 3. Understand the Example/Template Structure
+
+Walk through the scaffolded directories to see where future work belongs:
+
+- `fpga/` – Read comments in:
+  - `fpga/src/asoc_fpga_top_example.v`
+  - `fpga/constr/asoc_fpga_constraints_example.sdc`
+  - `fpga/sim/asoc_readout_tb_example.v`
+  - `fpga/projects/a3pe_proto_kit/a3pe_proto_kit_project_example.tcl`
+- `firmware/` – Read:
+  - `firmware/src/asoc_firmware_example.c`
+  - `firmware/platform/platform_config_example.h`
+- `software/` – Read:
+  - `software/daq/daq_example.py`
+  - `software/analysis/analysis_example.py`
+- `docs/` – Review templates in:
+  - `docs/hardware/hardware_overview_example.md`
+  - `docs/fpga/fpga_design_notes_example.md`
+  - `docs/experiments/experiment_log_example.md`
+
+These files intentionally include detailed comments and TODOs indicating where
+real implementation and documentation should be added.
+
+### 4. Review the Project Schedule and Identify Your Role
+
+Open `docs/PROJECT_SCHEDULE.md` and review the proposed phases and tasks.
+Work with your mentor or project lead to:
+
+- Map your contribution to specific phases (design, implementation,
+  characterization).
+- Select one or more focus areas (FPGA, firmware, DAQ software, analysis,
+  hardware/experiment documentation).
+
+### 5. Make Your First Contribution
+
+Depending on your focus area, typical first contributions might be:
+
+- **FPGA:**
+  - Replace `asoc_fpga_top_example.v` with a real top-level module tailored to
+    your hardware and ASOC interface.
+  - Start populating real constraint files in `fpga/constr/`.
+- **Firmware:**
+  - Replace the example firmware files with minimal code that can communicate
+    with ASOC (e.g., configure a small set of registers and verify behavior
+    on the bench).
+- **DAQ software:**
+  - Extend `software/daq/daq_example.py` into a script that can connect to
+    hardware (or a simulator) and log test data.
+- **Analysis:**
+  - Replace `software/analysis/analysis_example.py` with a basic analysis
+    script that reads example data and produces first-pass plots.
+- **Documentation:**
+  - Flesh out one of the example documents under `docs/hardware/`,
+    `docs/fpga/`, or `docs/experiments/` with details from your lab setup
+    or experiment plan.
+
+Coordinate with your mentor before pushing changes so that work remains aligned
+with overall project goals.
+
+## Common Pitfalls and Tips for Success
+
+Engineering teams new to ASOC- and FPGA-based readout projects often run into
+similar issues. A few to watch for:
+
+- **Treating example files as finished designs.** Everything under `fpga/`,
+  `firmware/`, `software/`, and `docs/*` Markdown is scaffolding. Use it as a
+  starting point, but plan to replace or extend it with real implementations
+  and lab-specific documentation.
+- **Deferring clock-domain planning.** ASOC, FPGA fabric, and high-speed links
+  may all run in different clock domains. Plan clock domain crossings early
+  (see `docs/fpga/fpga_design_notes_example.md` and comments in
+  `fpga/src/asoc_fpga_top_example.v`) instead of relying on vendor defaults.
+- **Under-constraining the design.** The example SDC file in `fpga/constr/`
+  shows where to capture clock, I/O standard, and pin constraints. Real
+  designs must specify these accurately to avoid "it works sometimes" behavior
+  in the lab.
+- **Not recording configurations.** When running experiments, always log ASOC
+  configuration, firmware/bitstream versions, and DAQ settings using the
+  templates in `docs/experiments/`. This makes it much easier to reproduce
+  results and diagnose issues.
+- **Diverging from NALU patterns unnecessarily.** Before inventing a new DAQ
+  or control API, review the examples in `external/nalu/naluexamples-main/`
+  and the NaluScope manual. Aligning with established workflows reduces
+  integration risk.
+- **Working in isolation.** Use `docs/PROJECT_SCHEDULE.md` and the templates in
+  `docs/hardware/`, `docs/fpga/`, and `docs/experiments/` to coordinate FPGA,
+  firmware, DAQ, and analysis work so that interfaces and file formats evolve
+  together.
+
 
 ## Contributing
 
-Because this repository supports an ongoing research collaboration between Virginia Tech and SwRI, contributions are primarily expected from team members at these institutions.
+Because this repository supports an ongoing research collaboration between
+Virginia Tech and SwRI, contributions are primarily expected from team members
+at these institutions.
 
 If you are part of the project team:
 
-- Coordinate with the designated project leads at your institution before introducing new subdirectories (e.g., `fpga/`, `asic/`, `software/`).
-- Use descriptive commit messages and keep related changes grouped logically (for example, ASIC register-map updates together with corresponding FPGA interface changes, once those files exist).
-- When FPGA/HDL content is added, follow any coding standards, directory conventions, or review processes established by the team (to be documented here as they are formalized).
+- Coordinate with the designated project leads at your institution before
+  introducing new subdirectories or major architecture changes.
+- Use descriptive commit messages and keep related changes grouped logically
+  (for example, ASOC register-map updates together with corresponding FPGA
+  interface changes, once those files exist).
+- When FPGA/HDL content is added, follow any coding standards, directory
+  conventions, or review processes established by the team (to be documented
+  here as they are formalized).
 
-If you are external to the collaboration and interested in this work, please contact the project team at Virginia Tech or SwRI through their official channels before proposing changes.
+If you are external to the collaboration and interested in this work, please
+contact the project team at Virginia Tech or SwRI through their official
+channels before proposing changes.
+
+## Frequently Asked Questions (FAQ)
+
+**Q1. Which NALU software components should I look at first?**
+
+- For **hardware usage and configuration patterns**, start with:
+  - `docs/ASOCv3 Quick Start Guide.pdf`
+  - `docs/ASoCv3 Product Sheet.pdf`
+  - `docs/NaluScope.0.22.3.-.ASoCv3.User.Manual.pdf`
+- For **example code**, explore the snapshots under `external/nalu/`:
+  - `naluexamples-main/` for Python examples and typical DAQ workflows.
+  - `ft60x-rs-main/` for Rust-based FT60x data-path examples.
+  - `nalusupport-main/` for additional documentation mirrored from NALU's
+    support site.
+
+**Q2. Can I program hardware and run a full ASOC readout system directly from this repository today?**
+
+Not yet. As of November 2025 this repository intentionally contains
+**documentation plus scaffolding/example files only**. It does *not* include a
+validated FPGA bitstream, firmware image, or DAQ application that can be built
+and run end-to-end without additional design work.
+
+**Q3. How should FPGA, firmware, and DAQ developers coordinate their work?**
+
+- Use `docs/fpga/fpga_design_notes_example.md` to document interfaces,
+  register maps, and timing assumptions.
+- Use `firmware/platform/platform_config_example.h` (or its replacement) to
+  capture platform-specific mappings that both firmware and FPGA engineers
+  agree on.
+- Use the experiment and hardware templates under `docs/` to document how
+  data is produced and consumed.
+- Refer to `docs/PROJECT_SCHEDULE.md` when assigning tasks, so milestones across
+  FPGA, firmware, DAQ, and analysis stay aligned.
+
+**Q4. Where do I find technical details like timing diagrams and performance targets?**
+
+- **Timing and usage examples:** `docs/ASOCv3 Quick Start Guide.pdf`
+- **Electrical and functional specifications:** `docs/ASoCv3 Product Sheet.pdf`
+- **Measured performance and example results:**
+  - `docs/Measurement_results_for_the_ASoC_V3_A_High_Performance_Waveform_Digitizer_System-on-Chip.pdf`
+  - `docs/1-s2.0-S0168900219304462-main.pdf`
+
+**Q5. What should I do if documentation seems incomplete or I discover something new?**
+
+Treat the repository documentation as a living resource:
+
+- Add or update sections in the Markdown templates under `docs/` to capture
+  what you learned.
+- Propose edits to this `README.md` (especially the Getting Started, Pitfalls,
+  and FAQ sections) so the next student or engineer benefits from your
+  experience.
+- Coordinate changes with your mentor or project lead to keep the shared
+  documentation consistent.
+
+
 
 ## Future Directions
 
