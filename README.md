@@ -255,6 +255,23 @@ contributing.
      stacks are used in practice.
    - `nalusupport-main/` – Offline copy of NALU’s support site and docs.
 
+#### Setting up a new Python environment (Linux)
+1. Install python3.10 on a Linux machine running Ubuntu/Debian:
+	- `sudo apt install python3.10 python3.10-dev python3.10-venv`
+
+2. Create a virtual environemt to isolate python packages:
+   - `python3.10 -m venv venv`
+   - `source venv/bin/activate`
+
+3. Run the make target to install all nalu-related dependencies:
+	- `make nalu`
+
+4. Run the Linux shell script provided in the nalu examples:
+	- `chmod +x external/nalu/naluexamples-main/scripts/udp/run_scripts.sh`
+	- `external/nalu/naluexamples-main/scripts/udp/run_scripts.sh`
+
+5. Modify environment variables in `run_scripts.sh' as needed
+
 ### 3. Understand the Example/Template Structure
 
 Walk through the scaffolded directories to see where future work belongs:
