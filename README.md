@@ -270,7 +270,12 @@ contributing.
 	- `chmod +x external/nalu/naluexamples-main/scripts/udp/run_scripts.sh`
 	- `external/nalu/naluexamples-main/scripts/udp/run_scripts.sh`
 
-5. Modify environment variables in `run_scripts.sh' as needed
+5. Assign the IP of your host device to the HOST_IP and TARGET_IP in `run_scripts.sh`:
+   	- run `ip a` to display networking information on your device
+   	- look for a line like this: `inet 172.29.120.211/20` in `2: eth0`
+	- Copy the above IP into HOST_IP and TARGET_IP in `run_scripts.sh`
+
+TODO: HOW TO INTERFACE WITH THE BOARD
 
 ### 3. Understand the Example/Template Structure
 
